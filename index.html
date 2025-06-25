@@ -67,48 +67,70 @@
           <th>Last Login</th>
         </tr>
       </thead>
-      <tbody id="leaderboard">
-      </tbody>
+      <tbody id="leaderboard"></tbody>
     </table>
   </div>
 
 <script>
+const apiURL = 'https://script.google.com/macros/s/AKfycbwmWjGmM6r_X1escZUUEe1KDj4uqPkk8SVBGL4Wvc0LblobPc3Zb4cRpsHL-iKbB_-Xmg/exec';
+
+// Login
 function login() {
-  const name = document.getElementById('username').value;
-  if (name.trim() === '') {
+  const name = document.getElementById('username').value.trim();
+  if (name === '') {
     alert('กรุณากรอกชื่อผู้เล่น');
     return;
   }
+  saveUser(name);
   alert('ยินดีต้อนรับ ' + name + ' เข้าสู่ QuestMusic!');
   loadLeaderboard();
 }
 
-async function loadLeaderboard() {
-  const sheetURL = 'https://docs.google.com/spreadsheets/d/15gHusf1_RDD8UnS5lMej5ehpeg0wJdUYHaYw3YuymAI/gviz/tq?';
-  const query = encodeURIComponent('Select *');
-  const url = `${sheetURL}&tq=${query}`;
-
-  const response = await fetch(url);
-  const text = await response.text();
-  const json = JSON.parse(text.substr(47).slice(0, -2));
-
-  const rows = json.table.rows;
-  let html = '';
-  rows.forEach((row, index) => {
-    const cells = row.c.map(cell => cell ? cell.v : '');
-    html += `<tr>
-      <td>${index + 1}</td>
-      <td>${cells[0]}</td>
-      <td>${cells[1]}</td>
-      <td>${cells[2]}</td>
-      <td>${cells[3]}</td>
-      <td>${cells[4]}</td>
-      <td>${cells[5]}</td>
-      <td>${cells[6]}</td>
-    </tr>`;
+// บันทึกข้อมูลเข้า Google Sheets
+function saveUser(name) {
+  const params = new URLSearchParams({
+    name: name,
+    level: 1,
+    score: 0,
+    missions: 0,
+    correct: 0,
+    scales: 0,
+    lastlogin: new Date().toLocaleDateString()
   });
+
+  fetch(`${apiURL}?${params}`, { method: 'GET' })
+    .then(response => response.json())
+    .then(data => {
+      console.log('บันทึกแล้ว:', data);
+    });
+}
+
+// โหลดข้อมูล Leaderboard
+async function loadLeaderboard() {
+  const res = await fetch(apiURL);
+  const data = await res.json();
+
+  const sorted = data.data.sort((a, b) => b.level - a.level);
+  let html = '';
+  sorted.forEach((item, index) => {
+    html += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${item.name}</td>
+        <td>${item.level}</td>
+        <td>${item.score}</td>
+        <td>${item.missions}</td>
+        <td>${item.correct}</td>
+        <td>${item.scales}</td>
+        <td>${item.lastlogin}</td>
+      </tr>`;
+  });
+
   document.getElementById('leaderboard').innerHTML = html;
 }
+
+// โหลดอัตโนมัติเมื่อเปิดเว็บ
+loadLeaderboard();
 </script>
 </body>
 </html>
