@@ -28,6 +28,9 @@
     tr:nth-child(even) {
       background-color: #1a1a1a;
     }
+    tr:hover {
+      background-color: #333333;
+    }
     h1 {
       color: #00ffc8;
     }
@@ -49,7 +52,7 @@
       </tr>
     </thead>
     <tbody id="leaderboard-body">
-      <tr><td colspan="8">Loading...</td></tr>
+      <tr><td colspan="8">⏳ Loading Leaderboard...</td></tr>
     </tbody>
   </table>
 
@@ -62,19 +65,19 @@
         const table = document.getElementById('leaderboard-body');
         table.innerHTML = '';
 
-        data.sort((a, b) => b.level - a.level); // เรียงตามเลเวล
+        data.sort((a, b) => b.score - a.score || b.level - a.level); // เรียงตามคะแนน
 
         data.forEach((item, index) => {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${item.name}</td>
-            <td>${item.level}</td>
-            <td>${item.score}</td>
-            <td>${item.missions}</td>
-            <td>${item.correct}</td>
-            <td>${item.scales}</td>
-            <td>${item.lastlogin}</td>
+            <td>${item.name || '-'}</td>
+            <td>${item.level ?? 0}</td>
+            <td>${item.score ?? 0}</td>
+            <td>${item.missions ?? 0}</td>
+            <td>${item.correct ?? 0}</td>
+            <td>${item.scales ?? 0}</td>
+            <td>${item.lastlogin || '-'}</td>
           `;
           table.appendChild(row);
         });
@@ -82,7 +85,7 @@
       .catch(error => {
         console.error('Error:', error);
         const table = document.getElementById('leaderboard-body');
-        table.innerHTML = '<tr><td colspan="8">Failed to load data</td></tr>';
+        table.innerHTML = '<tr><td colspan="8">❌ Failed to load data</td></tr>';
       });
   </script>
 </body>
