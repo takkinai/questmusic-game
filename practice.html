@@ -1,18 +1,69 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <title>Practice | QuestMusic</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice & Mission - QuestMusic</title>
+<style>
+  body {
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Prompt', sans-serif;
+    padding: 20px;
+    text-align: center;
+  }
+  h1, h2 {
+    color: #00ffea;
+  }
+  .section {
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #00ffea;
+    border-radius: 10px;
+    max-width: 800px;
+  }
+  button {
+    background-color: #00ffea;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #00c4b4;
+  }
+</style>
 </head>
 <body>
-  <h1>🎯 เลือกสเกลเพื่อฝึก</h1>
-  <ul>
-    <li>C Major</li>
-    <li>G Major</li>
-    <li>Am Minor</li>
-    <li>Em Minor</li>
+<h1>🎯 Practice & Mission</h1>
+<div class="section">
+  <h2>🎼 Practice Scales</h2>
+  <p>เลือกสเกลเพื่อฝึกฝน:</p>
+  <button onclick="alert('ฝึก C Major: C-D-E-F-G-A-B')">C Major</button>
+  <button onclick="alert('ฝึก G Major: G-A-B-C-D-E-F#')">G Major</button>
+  <button onclick="alert('ฝึก D Major: D-E-F#-G-A-B-C#')">D Major</button>
+  <button onclick="alert('ฝึก A Major: A-B-C#-D-E-F#-G#')">A Major</button>
+  <button onclick="alert('ฝึก E Major: E-F#-G#-A-B-C#-D#')">E Major</button>
+  <button onclick="alert('ฝึก A minor: A-B-C-D-E-F-G')">A minor</button>
+  <button onclick="alert('ฝึก E minor: E-F#-G-A-B-C-D')">E minor</button>
+  <button onclick="alert('ฝึก B minor: B-C#-D-E-F#-G-A')">B minor</button>
+  <button onclick="alert('ฝึก F# minor: F#-G#-A-B-C#-D-E')">F# minor</button>
+  <button onclick="alert('ฝึก C# minor: C#-D#-E-F#-G#-A-B')">C# minor</button>
+</div>
+
+<div class="section">
+  <h2>🚀 Daily Mission</h2>
+  <p>ภารกิจประจำวันของคุณ:</p>
+  <ul style="text-align:left;">
+    <li>✅ ฝึกสลับ C Major ↔ A minor 5 รอบ</li>
+    <li>✅ ฝึก G Major ↔ E minor 5 รอบ</li>
+    <li>✅ ท่องโครงสร้าง Major และ Minor ให้ครบ</li>
+    <li>✅ ทำแบบทดสอบในหน้า Theory ให้ได้อย่างน้อย 15/20</li>
+    <li>✅ คิดและสร้างสเกลของตัวเอง พร้อมตั้งชื่อ</li>
   </ul>
-  <br/>
-  <a href="index.html">⬅️ กลับหน้าหลัก</a>
+  <p>💎 เมื่อทำครบ รับคะแนน EXP และเลื่อนระดับ!</p>
+</div>
 </body>
 </html>
