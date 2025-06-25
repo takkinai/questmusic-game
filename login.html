@@ -1,0 +1,77 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - QuestMusic</title>
+  <style>
+    body { background-color: #121212; color: white; text-align: center; font-family: sans-serif; }
+    input { padding: 10px; border: none; border-radius: 5px; }
+    button { padding: 10px 20px; background: #00ffea; color: black; border: none; border-radius: 5px; cursor: pointer; }
+    .container { margin-top: 100px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎶 QuestMusic Login</h1>
+    <p>กรอกชื่อเพื่อเริ่มต้น</p>
+    <input type="text" id="username" placeholder="กรอกชื่อ...">
+    <br><br>
+    <button onclick="login()">เข้าสู่ระบบ</button>
+  </div>
+
+  <script>
+    function login() {
+      const name = document.getElementById('username').value;
+      if (name) {
+        localStorage.setItem('quest_username', name);
+        window.location.href = 'profile.html';
+      } else {
+        alert('กรุณากรอกชื่อ!');
+      }
+    }
+  </script>
+</body>
+</html>
+
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - QuestMusic</title>
+  <style>
+    body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; }
+    .card { border: 1px solid #00ffea; padding: 20px; border-radius: 10px; display: inline-block; margin-top: 50px; }
+    button { padding: 10px 20px; background: #00ffea; color: black; border: none; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>👤 โปรไฟล์ผู้เล่น</h1>
+    <p><strong>ชื่อ:</strong> <span id="name"></span></p>
+    <p><strong>Level:</strong> <span id="level">1</span></p>
+    <p><strong>Score:</strong> <span id="score">0</span></p>
+    <p><strong>Missions Done:</strong> <span id="missions">0</span></p>
+    <p><strong>Scales Completed:</strong> <span id="scales">0</span></p>
+    <p><strong>Last Login:</strong> <span id="lastlogin"></span></p>
+    <br>
+    <button onclick="logout()">ออกจากระบบ</button>
+  </div>
+
+  <script>
+    const name = localStorage.getItem('quest_username');
+    if (!name) window.location.href = 'login.html';
+
+    document.getElementById('name').innerText = name;
+    document.getElementById('lastlogin').innerText = new Date().toLocaleDateString();
+
+    function logout() {
+      localStorage.removeItem('quest_username');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
