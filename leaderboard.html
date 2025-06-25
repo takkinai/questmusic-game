@@ -3,71 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🏆 Leaderboard - QuestMusic</title>
+  <title>Leaderboard - QuestMusic</title>
   <style>
     body {
       background-color: #121212;
       color: white;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: sans-serif;
       text-align: center;
     }
-    h1 {
-      color: #00ffc8;
-      margin-top: 20px;
-    }
     table {
-      margin: 30px auto;
+      width: 90%;
+      margin: 20px auto;
       border-collapse: collapse;
-      width: 95%;
-      max-width: 1000px;
+      background-color: #1f1f1f;
     }
     th, td {
       border: 1px solid #00ffc8;
-      padding: 8px;
-      text-align: center;
+      padding: 10px;
     }
     th {
       background-color: #00ffc8;
       color: black;
     }
     tr:nth-child(even) {
-      background-color: #1e1e1e;
+      background-color: #1a1a1a;
     }
-    tr:hover {
-      background-color: #333333;
-    }
-    img {
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-    }
-    .btn {
-      background: #00ffc8;
-      color: black;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      text-decoration: none;
-      margin: 5px;
-    }
-    .btn:hover {
-      background: #00c0a5;
+    h1 {
+      color: #00ffc8;
     }
   </style>
 </head>
 <body>
-
-  <h1>🏆 Leaderboard - QuestMusic 🎷</h1>
-
-  <button class="btn" onclick="downloadCSV()">📥 Export CSV</button>
-  <a href="index.html" class="btn">🔙 กลับหน้าหลัก</a>
-
-  <table id="leaderboard">
+  <h1>🎯 Leaderboard - QuestMusic</h1>
+  <table>
     <thead>
       <tr>
         <th>Rank</th>
-        <th>Photo</th>
         <th>Name</th>
         <th>Level</th>
         <th>Score</th>
@@ -77,55 +48,42 @@
         <th>Last Login</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody id="leaderboard-body">
+      <tr><td colspan="8">Loading...</td></tr>
+    </tbody>
   </table>
 
-<script>
-const apiURL = 'https://script.google.com/macros/s/AKfycbwmWjGmM6r_X1escZUUEe1KDj4uqPkk8SVBGL4Wvc0LblobPc3Zb4cRpsHL-iKbB_-Xmg/exec
+  <script>
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbwmWjGmM6r_X1escZUUEe1KDj4uqPkk8SVBGL4Wvc0LblobPc3Zb4cRpsHL-iKbB_-Xmg/exec';
 
-fetch(apiURL)
-  .then(res => res.json())
-  .then(data => {
-    // เรียงตาม Level มาก → น้อย
-    data.sort((a, b) => b.Level - a.Level);
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        const table = document.getElementById('leaderboard-body');
+        table.innerHTML = '';
 
-    const tbody = document.querySelector('#leaderboard tbody');
-    data.forEach((player, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${index + 1}</td>
-        <td><img src="${player.Photo || 'https://via.placeholder.com/50'}" alt="Photo"></td>
-        <td>${player.Name || '-'}</td>
-        <td>${player.Level || 0}</td>
-        <td>${player.Score || 0}</td>
-        <td>${player.Missions || 0}</td>
-        <td>${player.Correct || 0}</td>
-        <td>${player["Scales Done"] || 0}</td>
-        <td>${player["Last Login"] || '-'}</td>
-      `;
-      tbody.appendChild(row);
-    });
-  })
-  .catch(err => console.error('Error:', err));
+        data.sort((a, b) => b.level - a.level); // เรียงตามเลเวล
 
-// ฟังก์ชัน Export CSV
-function downloadCSV() {
-  const rows = [['Rank','Name','Level','Score','Missions','Correct','Scales Done','Last Login']];
-  const trs = document.querySelectorAll('tbody tr');
-  trs.forEach(tr => {
-    const cols = Array.from(tr.children).map(td => td.innerText);
-    rows.push(cols);
-  });
-  let csvContent = "data:text/csv;charset=utf-8," 
-      + rows.map(e => e.join(",")).join("\n");
-  const link = document.createElement("a");
-  link.setAttribute("href", encodeURI(csvContent));
-  link.setAttribute("download", "QuestMusic_Leaderboard.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-</script>
-
+        data.forEach((item, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.name}</td>
+            <td>${item.level}</td>
+            <td>${item.score}</td>
+            <td>${item.missions}</td>
+            <td>${item.correct}</td>
+            <td>${item.scales}</td>
+            <td>${item.lastlogin}</td>
+          `;
+          table.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        const table = document.getElementById('leaderboard-body');
+        table.innerHTML = '<tr><td colspan="8">Failed to load data</td></tr>';
+      });
+  </script>
 </body>
 </html>
