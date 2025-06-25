@@ -40,6 +40,7 @@
       color: #00ffc8;
     }
   </style>
+  <script src="https://unpkg.com/pitchy/dist/pitchy.min.js"></script>
 </head>
 <body>
 
@@ -93,37 +94,59 @@
       }
     }
 
-    // 🔥 ระบบจับเสียง (Demo Version)
-    let audioContext, analyser, microphone, javascriptNode;
+    // 🔥 ระบบจับเสียง Pitch จริง
+    let audioContext, analyser, source, processor;
 
-    function startPractice() {
+    async function startPractice() {
       noteDisplay.textContent = '🎧 Listening...';
 
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(function(stream) {
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          analyser = audioContext.createAnalyser();
-          microphone = audioContext.createMediaStreamSource(stream);
-          javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      source = audioContext.createMediaStreamSource(stream);
 
-          analyser.smoothingTimeConstant = 0.8;
-          analyser.fftSize = 2048;
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      source.connect(analyser);
 
-          microphone.connect(analyser);
-          analyser.connect(javascriptNode);
-          javascriptNode.connect(audioContext.destination);
+      const buffer = new Float32Array(analyser.fftSize);
+      const [detectPitch] = Pitchy.createDetector(audioContext.sampleRate);
 
-          javascriptNode.onaudioprocess = function() {
-            const array = new Uint8Array(analyser.frequencyBinCount);
-            analyser.getByteFrequencyData(array);
+      processor = audioContext.createScriptProcessor(2048, 1, 1);
+      processor.connect(audioContext.destination);
+      analyser.connect(processor);
 
-            const average = array.reduce((a, b) => a + b) / array.length;
-            
-            if (average > 20) {
-              const note = detectFakeNote(); // 🔥 จำลองโน้ต
-              noteDisplay.textContent = `🎵 ${note}`;
-            }
-          };
-        })
-        .catch(function(err) {
-          alert('⚠️ ต้องอนุญาตให้ใช้ไมโครโฟนเพื่อเริ่มฝึก!');
+      processor.onaudioprocess = () => {
+        analyser.getFloatTimeDomainData(buffer);
+        const [frequency, clarity] = detectPitch(buffer);
+
+        if (clarity > 0.9) {
+          const note = frequencyToNote(frequency);
+          noteDisplay.textContent = `${note} (${frequency.toFixed(2)} Hz)`;
+        } else {
+          noteDisplay.textContent = '🎧 ...';
+        }
+      };
+    }
+
+    function stopPractice() {
+      if (source) source.disconnect();
+      if (analyser) analyser.disconnect();
+      if (processor) processor.disconnect();
+      if (audioContext) audioContext.close();
+      noteDisplay.textContent = '🎧 ...';
+    }
+
+    function frequencyToNote(freq) {
+      const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 
+                          'F#', 'G', 'G#', 'A', 'A#', 'B'];
+      const A4 = 440;
+      const semitone = 69 + 12 * Math.log2(freq / A4);
+      const rounded = Math.round(semitone);
+      const note = noteNames[(rounded + 120) % 12];
+      const octave = Math.floor(rounded / 12) - 1;
+      return `${note}${octave}`;
+    }
+  </script>
+
+</body>
+</html>
