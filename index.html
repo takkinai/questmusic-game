@@ -1,17 +1,114 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QuestMusic 🎷</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuestMusic Game</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Prompt', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #00ffea;
+    }
+    .button {
+      background-color: #00ffea;
+      border: none;
+      color: black;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #00c4b4;
+    }
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #00ffea;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #00ffea;
+      color: black;
+    }
+    .leaderboard {
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
-  <h1>🎶 ยินดีต้อนรับสู่ QuestMusic Game!</h1>
-  <p>เลือกโหมดด้านล่างเพื่อเริ่มฝึก</p>
-  <ul>
-    <li><a href="theory.html">📚 ทฤษฎีดนตรี</a></li>
-    <li><a href="practice.html">🎯 แบบฝึกสเกล</a></li>
-    <li><a href="mission.html">🏆 ภารกิจประจำวัน</a></li>
-  </ul>
+  <h1>🎷 QuestMusic Game</h1>
+  <h2>เข้าสู่ระบบ</h2>
+  <input type="text" id="username" placeholder="กรอกชื่อผู้เล่น">
+  <button class="button" onclick="login()">เริ่มเกม</button>
+
+  <div class="leaderboard">
+    <h2>🎯 Leaderboard</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Level</th>
+          <th>Score</th>
+          <th>Missions</th>
+          <th>Correct</th>
+          <th>Scales Done</th>
+          <th>Last Login</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard">
+      </tbody>
+    </table>
+  </div>
+
+<script>
+function login() {
+  const name = document.getElementById('username').value;
+  if (name.trim() === '') {
+    alert('กรุณากรอกชื่อผู้เล่น');
+    return;
+  }
+  alert('ยินดีต้อนรับ ' + name + ' เข้าสู่ QuestMusic!');
+  loadLeaderboard();
+}
+
+async function loadLeaderboard() {
+  const sheetURL = 'https://docs.google.com/spreadsheets/d/15gHusf1_RDD8UnS5lMej5ehpeg0wJdUYHaYw3YuymAI/gviz/tq?';
+  const query = encodeURIComponent('Select *');
+  const url = `${sheetURL}&tq=${query}`;
+
+  const response = await fetch(url);
+  const text = await response.text();
+  const json = JSON.parse(text.substr(47).slice(0, -2));
+
+  const rows = json.table.rows;
+  let html = '';
+  rows.forEach((row, index) => {
+    const cells = row.c.map(cell => cell ? cell.v : '');
+    html += `<tr>
+      <td>${index + 1}</td>
+      <td>${cells[0]}</td>
+      <td>${cells[1]}</td>
+      <td>${cells[2]}</td>
+      <td>${cells[3]}</td>
+      <td>${cells[4]}</td>
+      <td>${cells[5]}</td>
+      <td>${cells[6]}</td>
+    </tr>`;
+  });
+  document.getElementById('leaderboard').innerHTML = html;
+}
+</script>
 </body>
 </html>
